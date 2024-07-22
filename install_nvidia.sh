@@ -19,8 +19,12 @@ cp /var/cuda-repo-ubuntu2204-12-1-local/cuda-*.key /usr/share/keyrings/
 apt-get update
 apt-get -y install cuda
 
-# Install compatible versions of PyTorch for CUDA
-pip3 install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.0 --extra-index-url https://download.pytorch.org/whl/cu121
+# Install stable versions of PyTorch, Torchvision, and Torchaudio with CUDA support
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu121
+
+# Verify PyTorch installation
+python3 -c "import torch; print(torch.__version__)"
+python3 -c "import torchvision; print(torchvision.__version__)"
 
 # Install other dependencies
 pip3 install -r /ComfyUI/requirements.txt
