@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     wget \
-    unzip
+    unzip \
+    python3-venv
 
 # Clone the ComfyUI repository
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git

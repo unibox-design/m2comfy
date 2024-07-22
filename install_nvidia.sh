@@ -8,7 +8,8 @@ apt-get update && apt-get install -y \
     make \
     dkms \
     linux-headers-$(uname -r) \
-    lsof
+    lsof \
+    python3-venv
 
 # Add NVIDIA package repositories and install CUDA
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
@@ -19,16 +20,23 @@ cp /var/cuda-repo-ubuntu2204-12-1-local/cuda-*.key /usr/share/keyrings/
 apt-get update
 apt-get -y install cuda
 
+# Create and activate a virtual environment
+python3 -m venv /opt/venv
+source /opt/venv/bin/activate
+
+# Upgrade pip
+pip install --upgrade pip
+
 # Install stable versions of PyTorch, Torchvision, and Torchaudio with CUDA support
-pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu121
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu121
 
 # Verify PyTorch installation
-python3 -c "import torch; print(torch.__version__)"
-python3 -c "import torchvision; print(torchvision.__version__)"
+python -c "import torch; print(torch.__version__)"
+python -c "import torchvision; print(torchvision.__version__)"
 
 # Install other dependencies
-pip3 install -r /ComfyUI/requirements.txt
-pip3 install -r /ComfyUI/custom_nodes/ComfyUI-MimicMotionWrapper/requirements.txt
+pip install -r /ComfyUI/requirements.txt
+pip install -r /ComfyUI/custom_nodes/ComfyUI-MimicMotionWrapper/requirements.txt
 
 # Create necessary directories
 mkdir -p /ComfyUI/models/checkpoints \
@@ -52,4 +60,6 @@ wget -O /ComfyUI/models/diffusers/stable-video-diffusion-img2vid-xt-1-1/model_in
 
 # Start ComfyUI on port 8188
 echo "Starting ComfyUI on port 8188"
-cd /ComfyUI && python3 main.py --port 8188
+cd /ComfyUI
+source /opt/venv/bin/activate
+python main.py --port 8188
