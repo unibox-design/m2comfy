@@ -7,9 +7,10 @@ apt-get update && apt-get install -y \
     gcc \
     make \
     dkms \
-    linux-headers-$(uname -r)
+    linux-headers-$(uname -r) \
+    lsof
 
-# Add NVIDIA package repositories
+# Add NVIDIA package repositories and install CUDA
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
 mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
 wget https://developer.download.nvidia.com/compute/cuda/12.1.1/local_installers/cuda-repo-ubuntu2204-12-1-local_12.1.1-1_amd64.deb
@@ -45,6 +46,13 @@ wget -O /ComfyUI/models/diffusers/stable-video-diffusion-img2vid-xt-1-1/model_in
     && wget -O /ComfyUI/models/diffusers/stable-video-diffusion-img2vid-xt-1-1/vae/config.json https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1/resolve/main/vae/config.json \
     && wget -O /ComfyUI/models/diffusers/stable-video-diffusion-img2vid-xt-1-1/vae/diffusion_pytorch_model.fp16.safetensors https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1/resolve/main/vae/diffusion_pytorch_model.fp16.safetensors
 
-# Run ComfyUI
-cd /ComfyUI
-python3 main.py
+# Check if port 8188 is available
+if lsof -i :8188; then
+  # If port 8188 is in use, use port 8189
+  echo "Port 8188 is in use, starting ComfyUI on port 8189"
+  cd /ComfyUI && python3 main.py --port 8189
+else
+  # If port 8188 is available, use it
+  echo "Starting ComfyUI on port 8188"
+  cd /ComfyUI && python3 main.py --port 8188
+fi
