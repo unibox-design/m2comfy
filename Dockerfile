@@ -1,5 +1,5 @@
 # Use the latest nvidia/cuda image as base
-FROM nvidia/cuda:12.1-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
