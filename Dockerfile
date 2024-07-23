@@ -1,29 +1,23 @@
-# Use a basic Ubuntu image
-FROM ubuntu:22.04
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
-# Install necessary packages
+# Set the working directory in the container
+WORKDIR /workspace
+
+# Update and install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
-    python3 \
-    python3-pip \
-    wget \
-    unzip \
-    python3-venv
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clone the ComfyUI repository
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git
+# Copy the setup script into the container
+COPY setup.sh /workspace/setup.sh
 
-# Clone the Mimic Motion Wrapper into custom_nodes
-RUN git clone https://github.com/kijai/ComfyUI-MimicMotionWrapper.git ComfyUI/custom_nodes/ComfyUI-MimicMotionWrapper
+# Make the setup script executable
+RUN chmod +x /workspace/setup.sh
 
-# Copy the installation script into the container
-COPY install_nvidia.sh /install_nvidia.sh
+# Expose the port the app runs on
+EXPOSE 8000
 
-# Make the script executable
-RUN chmod +x /install_nvidia.sh
-
-# Expose port 8188 for ComfyUI
-EXPOSE 8188
-
-# Set the entrypoint to the installation script
-ENTRYPOINT ["/install_nvidia.sh"]
+# Set the command to run the setup script
+CMD ["sh", "/workspace/setup.sh"]
